@@ -1,0 +1,20 @@
+language: node_js
+node_js:
+  - 'node'
+install:
+  - yarn
+script:
+  - yarn test
+  - yarn lint
+  - yarn type
+before_deploy:
+  - yarn build
+deploy:
+  - provider: npm
+    skip_cleanup: true
+    email: simon.schwartz0@gmail.com
+    api_key:
+      secure: "GC/SZAzSa1WAvyd8sxBVE1NzTrS1E2hqmIYDMlwTu1+Q/OMWdoncNwzWX0iwX+5v9BrDQ6TMRvAQrTfHUfcqmCrwzkn96Y8PSqIiKW/XDaBHxPDrrqnJNXQOSHsze9FrNOCy1UNTiJCovZrIXzcd68o/bB0DFl2XsVubhKd2x1HngOGVoVpmrE3s9wlW8UVUVJ27EsHifOlILPiUzmPASLEWTeeBagBqkff4jECKDttSMWQh42+5tiZApr67wZIrqU9tun2Ri/L0kyLC/TvBpYnYaIUOqQvhMLTT/ZvjjxgQUQgHTVDPFt7MEGqCPsKIDBYbHGlbINxzn8CLjEdQFhzHI3ggDqKCcwLastaRcu/lnn2oEBLL/1Kw9bPmU3DzHqSeFUi3XJUeVflxBORo9rczos4cwrKv0vDk4m6W5WfZug7pd2I+50YE2fBIbh5utarNCZJlQvwvFMDvHPwWEKlSrQ3n45rCYKk8XMDEj0DDXraguM0VwEfNnAWyqT45VYYzPN7HsNBiSI8Vmm2578/ouz6VT42VTtvM+veKzkIVbsrLo8Jm89P9GKglEKzwIPOLpg2GgeQcOGGEaZur6uy2EwgQs3t2pVspzNUpgort5eTTi6hWbAD97rRXxXhWJcAqZsrujiYtHJNoZE5dCdxfoMdwQhV8EEUfonvLKlM="
+    on:
+      tags: true
+      branch: master
