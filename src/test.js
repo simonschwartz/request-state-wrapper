@@ -289,9 +289,56 @@ describe('single request should', () => {
 
     expect(result).toEqual(mockResponse)
   })
+
+  test('correctly handle request errors', async () => {
+    const failedRequest = createMockRequest({ time: 50, mockResponse, fail: true })
+
+    const mockRequest = createRequest({
+      id: 'MOCK_REQUEST',
+      request: [failedRequest],
+      stalledDelay: 20,
+      onFetching: jest.fn(),
+      onFinished: jest.fn(),
+    })
+
+    try {
+      await mockRequest({
+        onFetching,
+        onStalled,
+        onFinished,
+      })
+    } catch (error) {
+      expect(onFetching).toBeCalledWith({
+        id: 'MOCK_REQUEST',
+        isFetching: true,
+        isFinished: false,
+        isStalled: false,
+        timesRun: 1,
+      })
+      expect(onStalled).toBeCalledWith({
+        id: 'MOCK_REQUEST',
+        isFetching: true,
+        isFinished: false,
+        isStalled: true,
+        timesRun: 1,
+      })
+      expect(onFinished).toBeCalledWith({
+        id: 'MOCK_REQUEST',
+        isFetching: false,
+        isFinished: true,
+        isStalled: false,
+        timesRun: 1,
+      })
+      expect(error).toEqual(mockResponse)
+    }
+  })
 })
 
 describe('multiple requests should', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
   test('correctly return state to onStateChange() for non-stalled requests', async () => {
     const callback = jest.fn()
     const mockResponse = { data: 'mock-response-data' }
@@ -379,5 +426,50 @@ describe('multiple requests should', () => {
     ])
 
     expect(result).toEqual([mockResponse, mockResponse, mockResponse])
+  })
+
+  test('correctly handle request errors', async () => {
+    const onFetching = jest.fn()
+    const onStalled = jest.fn()
+    const onFinished = jest.fn()
+    const mockResponse = { data: 'mock-response-data' }
+    const mockErrorResponse = { error: 'mock-response-data' }
+    const mockAPIRequest1 = createMockRequest({
+      time: 10,
+      mockResponse: mockErrorResponse,
+      fail: true,
+    })
+    const mockAPIRequest2 = createMockRequest({ time: 20, mockResponse })
+    const mockAPIRequest3 = createMockRequest({ time: 50, mockResponse })
+
+    const mockRequest = createRequest({
+      id: 'MOCK_REQUEST',
+      request: [mockAPIRequest1, mockAPIRequest2, mockAPIRequest3],
+      stalledDelay: 50,
+      onFetching,
+      onStalled,
+      onFinished,
+    })
+
+    try {
+      await mockRequest()
+    } catch (error) {
+      expect(onFetching).toBeCalledWith({
+        id: 'MOCK_REQUEST',
+        isFetching: true,
+        isFinished: false,
+        isStalled: false,
+        timesRun: 1,
+      })
+      expect(onStalled).not.toBeCalled()
+      expect(onFinished).toBeCalledWith({
+        id: 'MOCK_REQUEST',
+        isFetching: false,
+        isFinished: true,
+        isStalled: false,
+        timesRun: 1,
+      })
+      expect(error).toEqual(mockErrorResponse)
+    }
   })
 })

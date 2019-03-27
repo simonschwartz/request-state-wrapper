@@ -86,7 +86,7 @@ export const createRequest = ({
       }
       this.startStalledTimer()
 
-      return Promise.all(this.request).then(payload => {
+      const onFinish = () => {
         clearTimeout(this.stalledTimer)
 
         this.setState(
@@ -97,10 +97,18 @@ export const createRequest = ({
           },
           this.onFinished || this.onStateChange,
         )
+      }
 
-        if (this.request.length === 1) return payload[0]
-        return payload
-      })
+      return Promise.all(this.request)
+        .then(payload => {
+          onFinish()
+          if (this.request.length === 1) return Promise.resolve(payload[0])
+          return Promise.resolve(payload)
+        })
+        .catch(error => {
+          onFinish()
+          return Promise.reject(error)
+        })
     },
   }
 
