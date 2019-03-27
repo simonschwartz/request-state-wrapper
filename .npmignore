@@ -8,3 +8,4 @@ babel.config.js
 .gitignore
 .eslintrc.js
 yarn.lock
+.travis.yml
