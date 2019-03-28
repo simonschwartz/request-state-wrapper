@@ -1,108 +1,105 @@
 # Request State Wrapper
 
-A simple wrapper for Asynchronous JavaScript requests that allows you to detect stalled, fetching and finished states.
+A small, less than 1kb gzipped, utility wrapper for Asynchronous JavaScript events.  
 
-What is the point of this tool? Read [Better loading states for the modern web](#).
+It allows you to easily handle fetching, stalled and finished states.
 
-## API
+<p align="center"><img src="https://user-images.githubusercontent.com/12635736/55130897-ab155600-5170-11e9-9d83-478281e512b7.gif" alt="" /></p>
+
+## Philosophy
+
+The way we handle loading states in front end applications can be incredibly reptetive and imperative.
+
+We also design loading states that aren't always the optimal user experience for all users. This means users with fast **AND slow connections**.
+
+Request state wrapper aims to solve the following problems.
+
+- Make it easy to detect stalled loading states so we can communicate to users on slower connections that the app is still working / not broken.
+- Take the reptetive code required to handle loading states, and compose it into a single, declarative utility function. This helps keep our codebases DRY(Dont Repeat Yourself).
+
+## Usage
+
+```bash
+npm install --save request-state-wrapper
+```
 
 ```javascript
 import { createRequest } from 'request-state-wrapper';
 
-// Create your smart request
+const yourAsyncFunction = fetch('https://api.com.au')
+    .then(response => response.json());
+
+// Create your request with request-state-wrapper
 const request = createRequest({
-    request: [<Promise>], // Array of Promises
-    stalledDelay: Number, // Time in MS before we consider a request stalled
-    onStateChange: Function, // Callback executed every time request state changes
+    request: [yourAsyncFunction],
+    stalledDelay: 1000,
+    onStateChange: state => { 
+        // handle fetching, stalled and finished states here... 
+    },
 });
 
 // run it!
-request();
+request()
+    .then(response => {
+        // handle response here...
+    })
+    .catch(error => {
+       // handle error here... 
+    })
 ```
 
-## Example
+### Usage recipies
+
+For more detailed implementation recipies see:
+
+- [Vanilla JavaScript with explicit event handlers](https://codesandbox.io/s/62vpv1o813)
+- [React Hooks](https://codesandbox.io/s/kw9p9jwz3v)
+- [Reusable React provider component](https://codesandbox.io/s/w6m4w2vowl)
+
+## API
+
+`createRequest` takes a single object argument.
 
 ```javascript
-// Before
-
-// Set our loading state
-loading = true
-
-// Start our asyncronous request/s
-Promise.all([asyncRequest(), anotherAsyncRequest()]).then(payload => {
-
-    // When it's finished, set loading state to false
-    loading = false
-
-    // Then handle the response
-    if(payload.error) // show error screen
-    // show success screen
-});
-
-// After
-import { createRequest } from 'request-state-wrapper';
-
-const getData = createRequest({
-    request: [asyncRequest, anotherAsyncRequest],
-    stalledDelay: 250,
-    onStateChange: state => { ... },
-})
-
-getData().then(payload => console.log(payload));
+const demoRequest = createRequest({ 
+    request,
+    stalledDelay,
+    onStateChange,
+    onFetching,
+    onStalled,
+    onFinished,
+ })
 ```
 
-With async/await
+**Required**
+
+- `request` - Array of one or more promises
+- `stalledDelay` - Time, in milliseconds, it takes for the request to be considered stalled
+
+**Optional**
+
+- `onStateChange` - Handler function that is called whenever the request state changes
+- `onFetching` - Handler function that is called whenever the request starts fetching
+- `onStalled` - Handler function that is called whenever the request state becomes stalled
+- `onFinished` - Handler function that is called whenever the request state finishes
+
+`createRequest` returns a function that invokes the request. It takes a single argument, an object of options *all of which are optional*.
 
 ```javascript
-// Before
-async function requests () {
-    const payload = await Promise.all[asyncRequest(), anotherAsyncRequest()];
-    console.log(payload);
-}
-
-// After
-import { createRequest } from 'request-state-wrapper';
-
-const getData = createRequest({
-    request: [asyncRequest, anotherAsyncRequest],
-    stalledDelay: 250,
-    onStateChange: state => { ... },
-})
-
-const data = await getData();
+demoRequest({
+    onStateChange,
+    onFetching,
+    onStalled,
+    onFinished,
+ })
 ```
 
-Add a specific handler for each type of event:
+- `onStateChange` - Handler function that is called whenever the request state changes
+- `onFetching` - Handler function that is called whenever the request starts fetching
+- `onStalled` - Handler function that is called whenever the request state becomes stalled
+- `onFinished` - Handler function that is called whenever the request state finishes
 
-```javascript
-import { createRequest } from 'request-state-wrapper';
+**Important:** 
 
-const getData = createRequest({
-    request: [asyncRequest(), anotherAsyncRequest()],
-    stalledDelay: 250,
-    onFetching: state => { ... },
-    onStalled: state => { ... },
-    onFinished: state => { ... },
-})
-```
-
-Note, specific handler will override onStateChange().
-
-Create your request, and add/override handlers when you run the request:
-
-```javascript
-import { createRequest } from 'request-state-wrapper';
-
-const getData = createRequest({
-    request: [asyncRequest(), anotherAsyncRequest()],
-    stalledDelay: 250,
-})
-
-const data = await getData({ onStateChange: state => { ... } });
-```
-
-Want some more examples? Check out some demo recipes:
-
-Simple UI with React
-Simple UI with React Hooks
-NodeJS server
+- Any options declared at request time will override options declared at creation time
+- `onFetching`, `onStalled`, `onFinished` take precedence over `onStateChange`
