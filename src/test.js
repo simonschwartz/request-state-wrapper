@@ -332,6 +332,35 @@ describe('single request should', () => {
       expect(error).toEqual(mockResponse)
     }
   })
+
+  test('if stalledDelay is not provided, isStalled should never be invoked', async () => {
+    const mockRequest = createRequest({
+      id: 'MOCK_REQUEST',
+      request: [mockAPIRequest],
+      onFetching,
+      onStalled,
+      onFinished,
+    })
+
+    const result = await mockRequest()
+    expect(onFetching).toBeCalledWith({
+      id: 'MOCK_REQUEST',
+      isFetching: true,
+      isFinished: false,
+      isStalled: false,
+      timesRun: 1,
+    })
+    expect(onStalled).not.toBeCalled()
+    expect(onFinished).toBeCalledWith({
+      id: 'MOCK_REQUEST',
+      isFetching: false,
+      isFinished: true,
+      isStalled: false,
+      timesRun: 1,
+    })
+
+    expect(result).toEqual(mockResponse)
+  })
 })
 
 describe('multiple requests should', () => {

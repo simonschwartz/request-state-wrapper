@@ -84,7 +84,8 @@ export const createRequest = ({
           this.onFetching || this.onStateChange,
         )
       }
-      this.startStalledTimer()
+
+      if (this.stalledDelay) this.startStalledTimer()
 
       const onFinish = () => {
         clearTimeout(this.stalledTimer)

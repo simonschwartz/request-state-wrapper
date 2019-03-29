@@ -55,6 +55,7 @@ For more detailed implementation recipies see:
 - [Vanilla JavaScript with explicit event handlers](https://codesandbox.io/s/62vpv1o813)
 - [React Hooks](https://codesandbox.io/s/kw9p9jwz3v)
 - [Reusable React provider component](https://codesandbox.io/s/w6m4w2vowl)
+- [React with Redux](https://codesandbox.io/s/8krrvvj2z9)
 
 ## API
 
@@ -74,10 +75,10 @@ const demoRequest = createRequest({
 **Required**
 
 - `request` - Array of one or more promises
-- `stalledDelay` - Time, in milliseconds, it takes for the request to be considered stalled
 
 **Optional**
 
+- `stalledDelay` - Time, in milliseconds, it takes for the request to be considered stalled
 - `onStateChange` - Handler function that is called whenever the request state changes
 - `onFetching` - Handler function that is called whenever the request starts fetching
 - `onStalled` - Handler function that is called whenever the request state becomes stalled
