@@ -12,9 +12,10 @@ The way we handle loading states in front end applications can be incredibly rep
 
 We also design loading states that aren't always the optimal user experience for all users. This means users with fast **AND slow connections**.
 
-Request state wrapper aims to solve the following problems.
+Request State Wrapper aims to solve the following problems.
 
 - Make it easy to detect stalled loading states so we can communicate to users on slower connections that the app is still working / not broken.
+- Make it easy to batch multiple requests together to avoid staggered UI updates.
 - Take the reptetive code required to handle loading states, and compose it into a single, declarative utility function. This helps keep our codebases DRY(Dont Repeat Yourself).
 
 ## Usage
