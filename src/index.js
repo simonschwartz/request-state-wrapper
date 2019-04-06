@@ -16,7 +16,7 @@ type RequestWrapperHandlers = {|
 
 type RequestWrapperParams = {
   id: string,
-  request: Array<Promise<any>>,
+  request: Array<() => Promise<any>>,
   stalledDelay: number,
   ...RequestWrapperHandlers,
 }
@@ -100,7 +100,7 @@ export const createRequest = ({
         )
       }
 
-      return Promise.all(this.request)
+      return Promise.all(this.request.map(req => req.call()))
         .then(payload => {
           onFinish()
           if (this.request.length === 1) return Promise.resolve(payload[0])

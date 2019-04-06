@@ -1,6 +1,6 @@
 import { createRequest } from './index'
 
-const createMockRequest = ({ time, mockResponse, fail = false }) =>
+const createMockRequest = ({ time, mockResponse, fail = false }) => () =>
   new Promise((resolve, reject) => {
     setTimeout(() => {
       if (fail) return reject(mockResponse)
@@ -360,6 +360,27 @@ describe('single request should', () => {
     })
 
     expect(result).toEqual(mockResponse)
+  })
+
+  test('request should not be fired until execution time', async () => {
+    const mockRequest = createRequest({
+      id: 'MOCK_REQUEST',
+      request: [mockAPIRequest],
+      stalledDelay: 5,
+      onFetching,
+      onStalled,
+      onFinished,
+    })
+
+    expect(onFetching).not.toBeCalled()
+    expect(onStalled).not.toBeCalled()
+    expect(onFinished).not.toBeCalled()
+
+    await mockRequest()
+
+    expect(onFetching).toBeCalled()
+    expect(onStalled).toBeCalled()
+    expect(onFinished).toBeCalled()
   })
 })
 
