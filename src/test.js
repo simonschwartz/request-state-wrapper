@@ -382,6 +382,39 @@ describe('single request should', () => {
     expect(onStalled).toBeCalled()
     expect(onFinished).toBeCalled()
   })
+
+  test('event handlers should be correctly called for multiple request-state-wrapper calls', async () => {
+    const mockRequest = createRequest({
+      id: 'MOCK_REQUEST',
+      request: [mockAPIRequest],
+      stalledDelay: 5,
+      onFetching,
+      onStalled,
+      onFinished,
+    })
+
+    expect(onFetching).not.toBeCalled()
+    expect(onStalled).not.toBeCalled()
+    expect(onFinished).not.toBeCalled()
+
+    await mockRequest()
+
+    expect(onFetching).toBeCalledTimes(1)
+    expect(onStalled).toBeCalledTimes(1)
+    expect(onFinished).toBeCalledTimes(1)
+
+    await mockRequest()
+
+    expect(onFetching).toBeCalledTimes(2)
+    expect(onStalled).toBeCalledTimes(2)
+    expect(onFinished).toBeCalledTimes(2)
+
+    await mockRequest()
+
+    expect(onFetching).toBeCalledTimes(3)
+    expect(onStalled).toBeCalledTimes(3)
+    expect(onFinished).toBeCalledTimes(3)
+  })
 })
 
 describe('multiple requests should', () => {

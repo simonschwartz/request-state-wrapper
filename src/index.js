@@ -80,7 +80,7 @@ export const createRequest = ({
       // should only run it once per multiple requests
       if (!this.state.isFetching) {
         this.setState(
-          { isFetching: true, timesRun: this.state.timesRun + 1 },
+          { isFetching: true, timesRun: this.state.timesRun + 1, isFinished: false },
           this.onFetching || this.onStateChange,
         )
       }
