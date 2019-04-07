@@ -47,7 +47,7 @@ export const createRequest = ({
       timesRun: 0,
     },
 
-    request,
+    request: typeof request === 'function' ? [request] : request,
     stalledDelay,
     onStalled,
     onFetching,

@@ -32,7 +32,7 @@ const yourAsyncFunction = () =>
 
 // Create your request with request-state-wrapper
 const request = createRequest({
-    request: [yourAsyncFunction],
+    request: yourAsyncFunction,
     stalledDelay: 1000,
     onStateChange: state => { 
         // handle fetching, stalled and finished states here... 
@@ -75,7 +75,7 @@ const demoRequest = createRequest({
 
 **Required**
 
-- `request` - Array of one or more promises
+- `request` - Function that returns a promise *or* Array of functions that return promises
 
 **Optional**
 

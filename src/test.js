@@ -29,7 +29,7 @@ describe('single request should', () => {
   test('correctly return state to onStateChange() for non-stalled requests', async () => {
     const mockRequest = createRequest({
       id: 'MOCK_REQUEST',
-      request: [mockAPIRequest],
+      request: mockAPIRequest,
       stalledDelay: 55,
       onStateChange,
     })
