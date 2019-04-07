@@ -1,6 +1,6 @@
 {
   "name": "request-state-wrapper",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A tiny package for managing the state of asynchronous requests.",
   "main": "dist/index.js",
   "scripts": {
