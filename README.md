@@ -27,8 +27,8 @@ npm install --save request-state-wrapper
 ```javascript
 import { createRequest } from 'request-state-wrapper';
 
-const yourAsyncFunction = fetch('https://api.com.au')
-    .then(response => response.json());
+const yourAsyncFunction = () => 
+    fetch('https://api.com.au').then(response => response.json());
 
 // Create your request with request-state-wrapper
 const request = createRequest({
