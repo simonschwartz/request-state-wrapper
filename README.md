@@ -28,25 +28,19 @@ npm install --save request-state-wrapper
 import { createRequest } from 'request-state-wrapper';
 
 const yourAsyncFunction = () => 
-    fetch('https://api.com.au').then(response => response.json());
+    fetch('https://api.github.com/repos/nodejs/node').then(response => response.json());
 
 // Create your request with request-state-wrapper
 const request = createRequest({
     request: yourAsyncFunction,
     stalledDelay: 1000,
-    onStateChange: state => { 
-        // handle fetching, stalled and finished states here... 
-    },
+    onStalled: () => { /* handle stalled state */ },
 });
 
-// run it!
+// Run it!
 request()
-    .then(response => {
-        // handle response here...
-    })
-    .catch(error => {
-       // handle error here... 
-    })
+  .then(response => { /* handle request response */ })
+  .catch(error => { /* handle request error */ });
 ```
 
 ### Usage recipies
@@ -79,7 +73,7 @@ const demoRequest = createRequest({
 
 **Optional**
 
-- `stalledDelay` - Time, in milliseconds, it takes for the request to be considered stalled
+- `stalledDelay` - Time, in milliseconds, it takes for the request to be considered stalled (defaults to 1000)
 - `onStateChange` - Handler function that is called whenever the request state changes
 - `onFetching` - Handler function that is called whenever the request starts fetching
 - `onStalled` - Handler function that is called whenever the request state becomes stalled

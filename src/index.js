@@ -32,7 +32,7 @@ export const INITIAL_REQUEST_STATE = {
 export const createRequest = ({
   id,
   request,
-  stalledDelay,
+  stalledDelay = 1000,
   onStalled,
   onFetching,
   onFinished,

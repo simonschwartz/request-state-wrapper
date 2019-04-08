@@ -333,10 +333,12 @@ describe('single request should', () => {
     }
   })
 
-  test('if stalledDelay is not provided, isStalled should never be invoked', async () => {
+  test('if stalledDelay is not provided, isStalled should default to 1000ms', async () => {
+    const longRequest = createMockRequest({ time: 1001, mockResponse })
+
     const mockRequest = createRequest({
       id: 'MOCK_REQUEST',
-      request: [mockAPIRequest],
+      request: longRequest,
       onFetching,
       onStalled,
       onFinished,
@@ -350,7 +352,7 @@ describe('single request should', () => {
       isStalled: false,
       timesRun: 1,
     })
-    expect(onStalled).not.toBeCalled()
+    expect(onStalled).toBeCalled()
     expect(onFinished).toBeCalledWith({
       id: 'MOCK_REQUEST',
       isFetching: false,
